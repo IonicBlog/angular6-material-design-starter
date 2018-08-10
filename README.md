@@ -25,3 +25,21 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+
+#---------------------------------------------------------------------------------------
+
+# How to use angular material design ?  
+`git clone https://github.com/ionicblog/`
+
+## Install Angular Material  
+`npm install --save @angular/material @angular/cdk @angular/animations`  
+
+## Material Design Icons  
+index.html: `http://google.github.io/material-design-icons/#icon-font-for-the-web`  
+
+## Import Style  
+styles.scss: `@import "~@angular/material/prebuilt-themes/indigo-pink.css";`  
+
+## Install perfect-scrollbar
+`npm install --save ngx-perfect-scrollbar`

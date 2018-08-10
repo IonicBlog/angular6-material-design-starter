@@ -1,0 +1,22 @@
+[{
+    "state": "dashboard",
+    "name": "DASHBOARD",
+    "type": "link",
+    "icon": "view_column"
+  },
+  {
+    "state": "apps",
+    "name": "APPS",
+    "type": "sub",
+    "icon": "apps",
+    "children": [{
+        "state": "calendar",
+        "name": "CALENDAR"
+      },
+      {
+        "state": "media",
+        "name": "MEDIA"
+      }
+    ]
+  }
+]
