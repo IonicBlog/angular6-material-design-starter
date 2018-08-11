@@ -1,21 +1,32 @@
-[{
+[
+  {
     "state": "dashboard",
     "name": "DASHBOARD",
-    "type": "link",
-    "icon": "view_column"
+    "type": "sub",
+    "icon": "view_column",
+    "children": [
+      {
+        "state": "home",
+        "name": "HOME",
+        "url": "/dashboard/home"
+      }
+    ]
   },
   {
-    "state": "apps",
-    "name": "APPS",
+    "state": "pages",
+    "name": "PAGES",
     "type": "sub",
     "icon": "apps",
-    "children": [{
-        "state": "calendar",
-        "name": "CALENDAR"
+    "children": [
+      {
+        "state": "users",
+        "name": "USERS",
+        "url": "/pages/users"
       },
       {
-        "state": "media",
-        "name": "MEDIA"
+        "state": "welcome",
+        "name": "WELCOME",
+        "url": "/pages/welcome"
       }
     ]
   }

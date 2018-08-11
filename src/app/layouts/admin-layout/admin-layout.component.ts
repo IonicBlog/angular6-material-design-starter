@@ -3,6 +3,7 @@ import { Subscription } from "rxjs";
 import { PerfectScrollbarDirective, PerfectScrollbarConfigInterface } from "ngx-perfect-scrollbar";
 import { Router } from "@angular/router";
 import { FormControl } from "@angular/forms";
+import { AppService } from "../../app.service";
 const SMALL_WIDTH_BREAKPOINT = 960;
 @Component({
   selector: "app-admin-layout",
@@ -14,56 +15,7 @@ export class AdminLayoutComponent implements OnInit {
 
   title = 'angular6-material-design-starter';
   opened: boolean = true;
-  menus = [
-    {
-      state: 'dashboard',
-      name: 'DASHBOARD',
-      type: 'link',
-      icon: 'view_column',
-    },
-    {
-      state: 'apps',
-      name: 'APPS',
-      type: 'sub',
-      icon: 'apps',
-      badge: [
-        { type: 'red', value: '5' }
-      ],
-      children: [
-        { state: 'calendar', name: 'CALENDAR' },
-        { state: 'media', name: 'MEDIA' },
-        { state: 'messages', name: 'MESSAGES' },
-        { state: 'social', name: 'SOCIAL' },
-        { state: 'chat', name: 'CHAT' }
-      ]
-    },
-    {
-      state: 'tables',
-      name: 'DATATABLE',
-      type: 'sub',
-      icon: 'format_line_spacing',
-      badge: [
-        {
-          type: 'blue-grey', value: '8'
-        }
-      ],
-      children: [
-        { state: 'fullscreen', name: 'FULLSCREEN' },
-        { state: 'editing', name: 'EDITING' },
-        { state: 'filter', name: 'FILTER' },
-        { state: 'paging', name: 'PAGING' },
-        { state: 'sorting', name: 'SORTING' },
-        { state: 'pinning', name: 'PINNING' },
-        { state: 'selection', name: 'SELECTION' },
-      ]
-    },
-    {
-      state: 'charts',
-      name: 'CHARTS',
-      type: 'link',
-      icon: 'show_chart',
-    }
-  ];
+  menus = [];
 
   selected = new FormControl(0);
   tabs = [];
@@ -84,16 +36,51 @@ export class AdminLayoutComponent implements OnInit {
   @ViewChild(PerfectScrollbarDirective) directiveScroll: PerfectScrollbarDirective;
   public config: PerfectScrollbarConfigInterface = {};
   constructor(
-    private _element: ElementRef,
     private router: Router,
+    public service: AppService,
     zone: NgZone) {
     this.mediaMatcher.addListener(mql => zone.run(() => {
       this.mediaMatcher = mql;
     }));
+    this.getMenus();
+  }
+
+
+  getMenus() {
+    this.service.httpGet('/assets/data/menus.json', {}, rs => {
+      this.menus = rs;
+      if (this.router.url == "/") {
+        this.addTab(this.menus[0], this.menus[0].children[0]);
+      } else {
+        let m = this.getMenuItem(this.router.url);
+        if (m.childitem == null) {
+          this.addTab(this.menus[0], this.menus[0].children[0]);
+        } else {
+          this.addTab(m.menuitem, m.childitem);
+        }
+      }
+    }, err => {
+    })
+  }
+
+  getMenuItem(state) {
+    var menuitem: any = {};
+    var childitem: any = null;
+    for (let i = 0; i < this.menus.length; i++) {
+      const m = this.menus[i];
+      for (let j = 0; j < m.children.length; j++) {
+        const c = m.children[j];
+        if (c.url == this.router.url) {
+          menuitem = m;
+          childitem = c;
+          break;
+        }
+      }
+    }
+    return { menuitem: menuitem, childitem: childitem };
   }
 
   ngOnInit(): void {
-    this.addTab(this.menus[0]);
   }
 
   runOnRouteChange(): void {
@@ -132,13 +119,12 @@ export class AdminLayoutComponent implements OnInit {
     }
   }
 
-  addTab(item) {
-
+  addTab(menuitem, childitem) {
     let flag = false;
     let tabIdnex = -1;
     for (let i = 0; i < this.tabs.length; i++) {
       const element = this.tabs[i];
-      if (item.name == element.name) {
+      if (childitem.name == element.name) {
         tabIdnex = i;
         flag = true;
         break;
@@ -146,11 +132,12 @@ export class AdminLayoutComponent implements OnInit {
     }
     if (flag) {
       this.selected.setValue(tabIdnex);
-      this.router.navigate([this.tabs[tabIdnex].state]);
+      // this.router.navigate([this.tabs[tabIdnex].state]);
     } else {
-      this.tabs.push(item);
+      this.tabs.push(childitem);
       this.selected.setValue(this.tabs.length - 1);
-      this.router.navigate([this.tabs[this.tabs.length - 1].state]);
+      // this.router.navigate([this.tabs[this.tabs.length - 1].state]);
+      // this.router.navigate([this.tabs[this.tabs.length - 1].state]);
     }
   }
 
@@ -162,6 +149,7 @@ export class AdminLayoutComponent implements OnInit {
 
   selectedIndexChange(event) {
     this.selected.setValue(event);
-    this.router.navigate([this.tabs[event].state]);
+    this.router.navigate([this.tabs[event].url]);
   }
 }
+
